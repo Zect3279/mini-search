@@ -11,41 +11,35 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import streamlit as st
-from streamlit.logger import get_logger
+import json
 
-LOGGER = get_logger(__name__)
+def read_json_value(file_name, i):
+  with open(f"{file_name}.json",'r', encoding='utf-8') as json_file:
+    data = json.load(json_file)
+    if i < len(data):
+      return data[i]
+    else:
+      return None
 
+def main():
+  st.title('タグと単語の番号検索')
 
-def run():
-    st.set_page_config(
-        page_title="Hello",
-        page_icon="👋",
-    )
+  selected_file = st.radio("対象を選択", ("tags", "words"))
 
-    st.write("# Welcome to Streamlit! 👋")
+  # ユーザーから数値を受け取る
+  i = st.number_input('タグ番号を入力:', min_value=0, step=1)
 
-    st.sidebar.success("Select a demo above.")
+  # JSONファイルから値を読み取る
+  result = read_json_value(selected_file, int(i))
 
-    st.markdown(
-        """
-        Streamlit is an open-source app framework built specifically for
-        Machine Learning and Data Science projects.
-        **👈 Select a demo from the sidebar** to see some examples
-        of what Streamlit can do!
-        ### Want to learn more?
-        - Check out [streamlit.io](https://streamlit.io)
-        - Jump into our [documentation](https://docs.streamlit.io)
-        - Ask a question in our [community
-          forums](https://discuss.streamlit.io)
-        ### See more complex demos
-        - Use a neural net to [analyze the Udacity Self-driving Car Image
-          Dataset](https://github.com/streamlit/demo-self-driving)
-        - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
-    """
-    )
+  # 結果を表示する
+  if result is not None:
+      st.success(f'{i}番タグ: {result}')
+  else:
+      st.error('指定された行は存在しません')
+
 
 
 if __name__ == "__main__":
-    run()
+  main()
